@@ -1,4 +1,5 @@
 import { Business } from "../mongodb/model/businessModel.js";
+import { Car } from "../mongodb/model/carModel.js";
 import { Order } from "../mongodb/model/orderModel.js";
 
 const createOrder = async (req, res) => {
@@ -48,7 +49,6 @@ const createOrder = async (req, res) => {
       { new: true }
     );
 
-    console.log(order);
     res.status(200).json(order);
   } catch (error) {
     console.log(error);
@@ -68,13 +68,34 @@ const getOrders = async (req, res) => {
 
 const updateOrder = async (req, res) => {
   try {
-    const { orderId, status } = req.params;
-    const order = await Order.findByIdAndUpdate(
-      { _id: orderId },
-      { status },
-      { new: true }
-    );
-    res.status(200).json(order);
+    const { orderId, status, carId } = req.params;
+
+    if (status === "confirmed") {
+      const order = await Order.findByIdAndUpdate(
+        { _id: orderId },
+        { status },
+        { new: true }
+      );
+
+      await Car.findByIdAndUpdate(
+        { _id: carId },
+        { isRentedByBusiness: true },
+        { new: true }
+      );
+      res.status(200).json(order);
+    } else {
+      const order = await Order.findByIdAndUpdate(
+        { _id: orderId },
+        { status },
+        { new: true }
+      );
+      await Car.findByIdAndUpdate(
+        { _id: carId },
+        { isRentedByBusiness: false },
+        { new: true }
+      );
+      res.status(200).json(order);
+    }
   } catch {
     console.log(error);
     res.status(500).json({ message: "Server error", error });

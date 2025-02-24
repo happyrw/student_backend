@@ -141,10 +141,15 @@ const getUser = async (req, res) => {
 // Update user
 const updateUser = async (req, res) => {
   try {
-    const { userId, role } = req.body;
-    const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
-
-    res.status(200).json({ user });
+    const { userId, role, contact } = req.body;
+    console.log(req.body);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { role: role, contact: contact },
+      { new: true }
+    );
+    console.log(user);
+    res.status(200).json(user);
   } catch (error) {
     console.error("Update user error:", error);
     res.status(500).json({ message: "Server error", error });

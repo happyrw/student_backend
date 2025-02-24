@@ -23,6 +23,9 @@ const carSchema = new mongoose.Schema(
     availableUntil: { type: Date, required: true }, // Car is available until a certain date
     isApproved: { type: Boolean, default: false }, // Admin Approval
     isRentedByBusiness: { type: Boolean, default: false }, // True when a business rents it
+    location: { type: String, required: true },
+    insuranceFileUrl: { type: String, required: true },
+    yellowCardFileUrl: { type: String, required: true },
   },
   { timestamps: true }
 );

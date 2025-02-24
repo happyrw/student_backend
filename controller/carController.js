@@ -15,6 +15,7 @@ const createCar = async (req, res) => {
       availableUntil,
       userId,
       role,
+      location,
     } = req.body;
     if (
       !brand ||
@@ -31,8 +32,18 @@ const createCar = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    let images = [];
-    const imageFiles = req.files;
+    console.log(req.body);
+
+    // Extract files from req.files
+    const imageFiles = req.files["images"] || []; // Array of image files
+    const insuranceFile = req.files["insuranceFile"]
+      ? req.files["insuranceFile"][0]
+      : null;
+    const yellowCardFile = req.files["yellowCardFile"]
+      ? req.files["yellowCardFile"][0]
+      : null;
+
+    let images = null;
 
     if (imageFiles.length > 0) {
       images = await Promise.all(
@@ -41,6 +52,16 @@ const createCar = async (req, res) => {
         })
       );
     }
+
+    // Upload insuranceFile if available
+    let insuranceFileUrl = insuranceFile
+      ? await uploadToCloudinary(insuranceFile.buffer)
+      : null;
+
+    // Upload yellowCardFile if available
+    let yellowCardFileUrl = yellowCardFile
+      ? await uploadToCloudinary(yellowCardFile.buffer)
+      : null;
 
     const newCar = new Car({
       ownerId: userId,
@@ -53,6 +74,9 @@ const createCar = async (req, res) => {
       description,
       availableUntil,
       images,
+      location,
+      insuranceFileUrl,
+      yellowCardFileUrl,
     });
 
     const car = await newCar.save();
@@ -80,4 +104,33 @@ const fetchCar = async (req, res) => {
   }
 };
 
-export { createCar, fetchCar };
+const updateCar = async (req, res) => {
+  try {
+    const car = await Car.findOneAndUpdate(
+      { _id: req.params.carId },
+      { isApproved: true },
+      { new: true }
+    );
+    res.status(200).json(car);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const updateCarAvailabilityTime = async (req, res) => {
+  const availableUntil = req.body;
+  try {
+    const car = await Car.findOneAndUpdate(
+      { _id: req.params.carId },
+      availableUntil,
+      { new: true }
+    );
+    res.status(200).json(car);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export { createCar, fetchCar, updateCar, updateCarAvailabilityTime };

@@ -5,6 +5,7 @@ import { connectDB } from "./mongodb/db.js";
 import { userRouter } from "./route/userRoute.js";
 import { businessRoutes } from "./route/businessRoute.js";
 import { carRoutes } from "./route/carRoute.js";
+import { orderRoute } from "./route/orderRoute.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 app.use("/auth/user", userRouter);
 app.use("/root/business", businessRoutes);
 app.use("/root/cars", carRoutes);
+app.use("/root/orders", orderRoute);
 
 const PORT = 5000;
 app.listen(PORT, async () => {
