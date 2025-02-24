@@ -16,7 +16,8 @@ const orderSchema = new mongoose.Schema(
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     totalPrice: { type: Number, required: true },
-    contact: { type: String, required: true },
+    businessContact: { type: String, required: true },
+    ownerContact: { type: String, required: true },
     carOwnerId: { type: String, required: true },
     status: {
       type: String,

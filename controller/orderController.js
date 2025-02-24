@@ -1,6 +1,7 @@
 import { Business } from "../mongodb/model/businessModel.js";
 import { Car } from "../mongodb/model/carModel.js";
 import { Order } from "../mongodb/model/orderModel.js";
+import { User } from "../mongodb/model/userModel.js";
 
 const createOrder = async (req, res) => {
   try {
@@ -30,6 +31,12 @@ const createOrder = async (req, res) => {
         .json({ message: "Some fields not found for rental" });
     }
 
+    console.log(typeof carOwnerId);
+
+    const carOwner = await User.findById({
+      _id: carOwnerId,
+    });
+
     const newOrder = new Order({
       carOwnerId,
       clientId,
@@ -38,7 +45,8 @@ const createOrder = async (req, res) => {
       startDate,
       endDate,
       totalPrice: totalAmount,
-      contact: contactNumber,
+      businessContact: contactNumber,
+      ownerContact: carOwner.contact,
     });
 
     const order = await newOrder.save();
@@ -49,7 +57,7 @@ const createOrder = async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json(order);
+    res.status(200).json({ order });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error", error });

@@ -121,9 +121,12 @@ const updateCar = async (req, res) => {
 const updateCarAvailabilityTime = async (req, res) => {
   const availableUntil = req.body;
   try {
+    await Car.findOneAndUpdate({ _id: req.params.carId }, availableUntil, {
+      new: true,
+    });
     const car = await Car.findOneAndUpdate(
       { _id: req.params.carId },
-      availableUntil,
+      { isApproved: false },
       { new: true }
     );
     res.status(200).json(car);
