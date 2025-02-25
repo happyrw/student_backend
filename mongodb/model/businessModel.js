@@ -16,6 +16,7 @@ const businessSchema = new mongoose.Schema(
     tin: { type: String, default: false },
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
     rentals: [{ type: mongoose.Schema.Types.ObjectId, ref: "Car" }],
+    declineReason: { type: String },
   },
   { timestamps: true }
 );

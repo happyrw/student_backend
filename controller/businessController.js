@@ -75,7 +75,17 @@ const allBusiness = async (req, res) => {
 
 const updateBusiness = async (req, res) => {
   const { businessId } = req.params;
+  const { declineReason } = req.body;
   try {
+    if (declineReason) {
+      await Business.findByIdAndUpdate(
+        { _id: businessId },
+        { declineReason },
+        { new: true }
+      );
+      return res.status(200).json({ message: "Business declined" });
+    }
+
     const businesses = await Business.findOneAndUpdate(
       { _id: businessId },
       { isApproved: true },
