@@ -14,6 +14,7 @@ const carSchema = new mongoose.Schema(
     }, // Business that rents the car
     brand: { type: String, required: true },
     transmission: { type: String, required: true },
+    declineReason: { type: String },
     fuelType: { type: String, required: true },
     model: { type: String, required: true },
     year: { type: Number, required: true },

@@ -105,13 +105,28 @@ const fetchCar = async (req, res) => {
 };
 
 const updateCar = async (req, res) => {
+  const { declineReason } = req.body;
   try {
-    const car = await Car.findOneAndUpdate(
-      { _id: req.params.carId },
-      { isApproved: true },
-      { new: true }
-    );
-    res.status(200).json(car);
+    if (declineReason) {
+      const car = await Car.findOneAndUpdate(
+        { _id: req.params.carId },
+        {
+          declineReason: declineReason,
+          isApproved: false,
+        },
+        { new: true }
+      );
+      res.status(200).json(car);
+    } else {
+      const car = await Car.findOneAndUpdate(
+        { _id: req.params.carId },
+        {
+          isApproved: true,
+        },
+        { new: true }
+      );
+      res.status(200).json(car);
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
